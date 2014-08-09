@@ -1,0 +1,20 @@
+Проигрывание композиций с SD-карты по командам по сети
+
+RTC
+
+Вывести наружу:
+
+1. UARTx2       - 4 pins
+2. I2S/I2C      - 4 pins
+3. CAN          - 2 pins
+4. LCD          - ?
+5. SPI          - 2 pins
+                = 12 pins + ?
+
+
+
+I2C/UART/IRDA/RS485 - 2 pins (p2_3, p2_4)
+UART                - 2 pins
+I2S/CAN             - 2 pins (p3_1, p3_2)
+SPI                 - 2 pins
+LCD                 - ????? (TFT 16/24 bit??)
