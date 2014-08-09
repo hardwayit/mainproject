@@ -1,0 +1,45 @@
+#!/usr/bin/ruby19
+
+require 'pathname'
+
+# aes_active 6
+# hash_active 2
+# aes_control 2
+# hash_size 16
+# hash_value 64
+
+def make_header header
+  [
+    (header[:aes_active] ? 0x25 : 0x1A) | (header[:hash_active] ? 0x00 : 0xC0),
+    (0x3F | (header[:aes_control].to_i<<6)),
+    header[:hash_size]&0xFF,
+    (header[:hash_size]>>8)&0xFF,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0xFF, 0xFF, 0xFF, 0xFF
+  ]
+end
+
+if ARGV.count != 2
+  raise ArgumentError, "TODO: print prompt"
+end
+
+infile_path = Pathname.new(ARGV[0]).expand_path
+outfile_path = Pathname.new(ARGV[1]).expand_path
+
+
+raise ArgumentError, 'infile (%s) is not readable' % infile_path.to_s unless infile_path.readable_real?
+raise ArgumentError, 'outfile is not writable' unless outfile_path.exist? && outfile_path.writable_real? or
+                                                      outfile_path.dirname.writable_real?
+
+infile_data = IO.binread(infile_path).unpack('C*')
+
+infile_data = infile_data + ([0] * (512 - infile_data.length%512))
+
+header = make_header({:hash_size => infile_data.length/512})
+
+outfile_data = header.to_a + infile_data
+
+IO.binwrite outfile_path, outfile_data.pack('C*')
+
+# vim: sw=2 sts=2 ts=8:
+

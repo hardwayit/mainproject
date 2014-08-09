@@ -1,0 +1,30 @@
+#!/usr/bin/ruby19
+
+require 'pathname'
+require 'serialport'
+
+uart = SerialPort.new '/dev/ttyUSB0', 115200, 8, 1
+
+uart.write "?"
+
+res = uart.readline
+
+raise 'Not OK' if res.index('OK').nil?
+
+puts 'Connection established'
+
+if !ARGV[0].nil?
+  raise ArgumentError, 'infile (%s) is not readable' % ARGV[0] unless Pathname.new(ARGV[0]).expand_path.readable_real?
+
+  image = IO.binread ARGV[0]
+
+  puts 'Writing image, size = %d bytes' % image.length
+  puts 'Writed %s bytes' % uart.write(image)
+
+  print 'Download status: '
+
+  10.times { puts uart.readline }
+end
+
+# vim: sw=2 sts=2 ts=8:
+
