@@ -1,0 +1,4 @@
+mainproject
+===========
+
+Own main project
